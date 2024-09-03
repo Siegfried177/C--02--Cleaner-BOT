@@ -1,3 +1,5 @@
 #define N 2
 
-char area[N][N];
+char area[N][N] = {
+{'.', '.'},
+{'.', '#'}};
