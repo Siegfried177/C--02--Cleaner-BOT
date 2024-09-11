@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "robot.h"
 
-int count, count2, back_done;
+int count, count2, back_done, rows[N];
 char log_moves[N * (N + 7)], second_log[N * (N + 7)];
 
 // Función que muestra el tablero
@@ -94,6 +94,7 @@ void move_bot(int *bot_pos, int *next_move, int *cleaned) {
     if (area[bot_pos[0]][bot_pos[1]] == '.'){
         area[bot_pos[0]][bot_pos[1]] = 'C';
         *cleaned += 1;
+        rows[bot_pos[0]]--;
         back_done= 1;
     }
     count++;
@@ -101,12 +102,15 @@ void move_bot(int *bot_pos, int *next_move, int *cleaned) {
 
 int main(){
     char last_move = 0;
-    int bot_pos[2] = {0, 0}, last_move_array[2] = {0, 0}, next_move[2] = {0, 0}, cleaned = 1, total_squares = 0, counter = 0;
+    int bot_pos[2] = {0, 0}, last_move_array[2] = {0, 0}, next_move[2] = {0, 0};
+    int cleaned = 1, total_squares = 0, counter = 0;
 
-    for(int i = 0; i < N; i++) // Se cuentan las casillas a limpiar
+    for(int i = 0, area[0][0] = 'C'; i < N; i++) // Se cuentan las casillas a limpiar y se marca como "limpia" la casilla de salida
         for(int j = 0; j < N; j++)
-            area[i][j] == '.' ? total_squares++ : 0;
-    area[0][0] = 'C'; // Se marca como "limpia" la casilla de salida
+            if (area[i][j] == '.'){ 
+                total_squares++;
+                rows[i]++;
+            }
 
     while(cleaned < total_squares && counter < 20){
         update_array(next_move, - next_move[0], - next_move[1]); // Reinicio el array del siguiente movimiento a (0, 0)
@@ -114,9 +118,12 @@ int main(){
         log_moves[count] = last_move; // Actualizo el log
         move_bot(bot_pos, next_move, &cleaned);
         counter++;
+        for (int i = 0; i < N; i++)
+            printf(" %d", rows[i]);
     }
     print_area();
     print_log();
+    
     print_log2();
     return 0;
 }
